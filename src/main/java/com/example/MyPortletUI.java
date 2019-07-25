@@ -3,10 +3,17 @@ package com.example;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletSession;
 
+import com.example.hhapi.HeadHunterApi;
+import com.example.hhapi.JSONParser;
+import com.example.hhapi.SimpleJSONParser;
+
+import com.example.model.Vacancy;
+
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
@@ -17,6 +24,10 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
@@ -33,17 +44,24 @@ public class MyPortletUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
+        List<Vacancy> vacancies = null;
+        
+        JSONParser parser = new SimpleJSONParser();
+        HeadHunterApi api = new HeadHunterApi(parser);
+        try {
+             vacancies = api.getVacancies();
+        } catch (IOException e) {
+        }
+        
+        List<Vacancy> list = new ArrayList<>(vacancies);
         final Button button = new Button("Click Me");
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                layout.addComponent(new Label(
-                        "Hello, World!<br>This is portlet "
-                                + portletContextName
-                                + ".<br>This portal has "
-                                + numOfRegisteredUsers
-                                + " registered users (according to the data returned by Liferay API call).",
-                        ContentMode.HTML));
 
+        button.addClickListener((ClickEvent event)-> {
+            for (Vacancy v : list) {
+                String labelText = v.toString();
+                layout.addComponent(new Label(
+                            labelText,
+                            ContentMode.HTML));
             }
         });
         layout.addComponent(button);
