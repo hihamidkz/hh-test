@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.example.myservice.model.Vacancy">
+		<field name="id" type="long" />
+		<field name="name" type="String" />
+		<field name="publishedAt" type="String" />
+		<field name="employer" type="String" />
+		<field name="salary" type="String" />
+		<field name="address" type="String" />
+	</model>
+</model-hints>
