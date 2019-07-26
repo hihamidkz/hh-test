@@ -1,6 +1,8 @@
 package com.example.hhapi;
 
-import com.example.model.Vacancy;
+import com.example.myservice.model.Vacancy;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +29,7 @@ public class HeadHunterApi {
         this.parser = parser;
     }
     
-    public List<Vacancy> getVacancies() throws IOException {
+    public List<Vacancy> getVacancies() throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
         params.put("area", AREA);
         params.put("specialization", SPECIALIZATION);

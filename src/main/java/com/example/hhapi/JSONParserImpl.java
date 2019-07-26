@@ -1,21 +1,21 @@
 package com.example.hhapi;
 
-import com.example.model.Address;
-import com.example.model.Employer;
-import com.example.model.Salary;
-import com.example.model.Vacancy;
+import com.example.myservice.model.Vacancy;
 
+import com.example.myservice.service.VacancyLocalServiceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.liferay.portal.kernel.exception.SystemException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class JSONParserImpl implements JSONParser {
     @Override
-    public List<Vacancy> parseVacancies(String json) {
+    public List<Vacancy> parseVacancies(String json) throws SystemException {
         JsonParser parser = new JsonParser();
         JsonObject object = parser.parse(json).getAsJsonObject();
         JsonArray array = object.getAsJsonArray("items");
@@ -27,50 +27,53 @@ public class JSONParserImpl implements JSONParser {
             long id = o.get("id").getAsLong();
             String name = o.get("name").getAsString();
             String publishedAt = o.get("published_at").getAsString();
-            Employer employer = parseEmployeer(o.get("employer"));
-            Salary salary = parseSalary(o.get("salary"));
-            Address address = parseAddress(o.get("address"));
-            Vacancy vacancy = new Vacancy(id, name, publishedAt, employer, salary, address);
+            String employer = parseEmployeer(o.get("employer"));
+            String salary = parseSalary(o.get("salary"));
+            String address = parseAddress(o.get("address"));
+            Vacancy vacancy = VacancyLocalServiceUtil.createVacancy(id);
+            vacancy.setName(name);
+            vacancy.setPublishedAt(publishedAt);
+            vacancy.setSalary(salary);
+            vacancy.setEmployer(employer);
+            vacancy.setAddress(address);
             vacancies.add(vacancy);
+            VacancyLocalServiceUtil.addOrUpdate(vacancy);
         }
 
         return vacancies;
     }
 
-    private Employer parseEmployeer(JsonElement element) {
+    private String parseEmployeer(JsonElement element) throws SystemException {
         if (element.isJsonNull()) {
             return null;
         }
 
         JsonObject object = element.getAsJsonObject();
-        long id = object.get("id").getAsLong();
-        String employerName = object.get("name").getAsString();
-        String website = object.get("url").getAsString();
-
-        Employer employer = new Employer(id, employerName, website);
+        String employer = object.get("name").getAsString();
 
         return employer;
     }
 
-    private Salary parseSalary(JsonElement element) {
+    private String parseSalary(JsonElement element) {
         if (element.isJsonNull()) {
             return null;
         }
 
         JsonObject object = element.getAsJsonObject();
         String from = object.get("from").getAsString();
-        String to = "";
+        String to = null;
 
         if (!object.get("to").isJsonNull()) {
             to = object.get("to").getAsString();
         }
 
-        Salary salary = new Salary(from, to);
+        String salary = (to == null) ? 
+                "От " + from : "От " + from + " до " + to;
 
         return salary;
     }
 
-    private Address parseAddress(JsonElement element) {
+    private String parseAddress(JsonElement element) throws SystemException {
         if (element.isJsonNull()) {
             return null;
         }
@@ -79,9 +82,8 @@ public class JSONParserImpl implements JSONParser {
         String city = object.get("city").getAsString();
         String street = object.get("street").getAsString();
         String building = object.get("building").getAsString();
-
-        Address address = new Address(city, street, building);
-
+        String address = city + ", " + street + ", " + building;
+        
         return address;
     }
 }
