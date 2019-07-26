@@ -4,7 +4,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>hh-test</artifactId>
 	<version>0.1</version>
-	<name>hh-test Portlet</name>
+	<name>hh-test</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -132,8 +132,8 @@
 				<version>3.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
@@ -215,6 +215,7 @@
 					<appServerPortalDir>${liferay.app.server.portal.dir}</appServerPortalDir>
 					<liferayVersion>${liferay.version}</liferayVersion>
 					<pluginType>portlet</pluginType>
+					<pluginName>${project.artifactId}-${project.version}</pluginName>
 				</configuration>
 			</plugin>
 		</plugins>
