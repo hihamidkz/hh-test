@@ -42,8 +42,17 @@ public class JSONParserImpl implements JSONParser {
 
         return vacancies;
     }
+    
+    @Override
+    public int parsePagesCount(String json) {
+        JsonParser parser = new JsonParser();
+        JsonObject object = parser.parse(json).getAsJsonObject();
+        JsonElement pagesCount = object.get("pages");
+        
+        return pagesCount.getAsInt();
+    }
 
-    private String parseEmployeer(JsonElement element) throws SystemException {
+    private String parseEmployeer(JsonElement element) {
         if (element.isJsonNull()) {
             return null;
         }
@@ -60,30 +69,43 @@ public class JSONParserImpl implements JSONParser {
         }
 
         JsonObject object = element.getAsJsonObject();
-        String from = object.get("from").getAsString();
-        String to = null;
-
+        StringBuilder salary = new StringBuilder();
+        
+        if (!object.get("from").isJsonNull()) {
+            salary.append("от " + object.get("from").getAsString());
+        }
+        
         if (!object.get("to").isJsonNull()) {
-            to = object.get("to").getAsString();
+            salary.append("до " + object.get("to").getAsString());
+        }
+        
+        if (salary.length() == 0) {
+            salary.append("з/п не указана");
         }
 
-        String salary = (to == null) ? 
-                "От " + from : "От " + from + " до " + to;
-
-        return salary;
+        return salary.toString();
     }
 
-    private String parseAddress(JsonElement element) throws SystemException {
+    private String parseAddress(JsonElement element) {
         if (element.isJsonNull()) {
             return null;
         }
 
         JsonObject object = element.getAsJsonObject();
-        String city = object.get("city").getAsString();
-        String street = object.get("street").getAsString();
-        String building = object.get("building").getAsString();
-        String address = city + ", " + street + ", " + building;
+        StringBuilder address = new StringBuilder();
         
-        return address;
+        if (!object.get("city").isJsonNull()) {
+            address.append(object.get("city").getAsString());
+        }
+        
+        if (!object.get("street").isJsonNull()) {
+            address.append(object.get("street").getAsString());
+        }
+        
+        if (!object.get("building").isJsonNull()) {
+            address.append(object.get("city").getAsString());
+        }
+        
+        return address.toString();
     }
 }

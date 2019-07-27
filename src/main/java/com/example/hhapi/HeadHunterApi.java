@@ -20,8 +20,7 @@ public class HeadHunterApi {
     final String USER_AGENT = "HHTest/0.1";
     final String AREA = "1202";
     final String SPECIALIZATION = "1";
-    final String PAGE = "1";
-    final String PER_PAGE = "2";
+    final String PAGE = "0";
     
     JSONParser parser;
     
@@ -29,12 +28,12 @@ public class HeadHunterApi {
         this.parser = parser;
     }
     
-    public List<Vacancy> getVacancies() throws IOException, SystemException {
+    public List<Vacancy> getVacancies(int page, int perPage) throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
         params.put("area", AREA);
         params.put("specialization", SPECIALIZATION);
-        params.put("page", PAGE);
-        params.put("per_page", PER_PAGE);
+        params.put("page", String.valueOf(page));
+        params.put("per_page", String.valueOf(perPage));
         
         String requestUrl = getRequestUrl("vacancies", params);
         
@@ -48,6 +47,27 @@ public class HeadHunterApi {
         String response = br.lines().collect(Collectors.joining());
         
         return parser.parseVacancies(response);
+    }
+    
+    public int getPagesCount(int perPage) throws IOException {
+        Map<String, String> params = new HashMap<>();
+        params.put("area", AREA);
+        params.put("specialization", SPECIALIZATION);
+        params.put("page", PAGE);
+        params.put("per_page", String.valueOf(perPage));
+        
+        String requestUrl = getRequestUrl("vacancies", params);
+        
+        URL url = new URL(requestUrl.toString());
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.addRequestProperty("User-Agent", USER_AGENT);
+        
+        InputStream in = conn.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        String response = br.lines().collect(Collectors.joining());
+        
+        return parser.parsePagesCount(response);
     }
     
     private String getRequestUrl(String rest, Map<String, String> params) {

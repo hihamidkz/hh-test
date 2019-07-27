@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface JSONParser {
     List<Vacancy> parseVacancies(String json) throws SystemException;
+    int parsePagesCount(String json);
 }
