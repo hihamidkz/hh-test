@@ -15,17 +15,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class HeadHunterApi {
-    final String BASE_URL = "https://api.hh.ru/";
-    final String USER_AGENT = "HHTest/0.1";
-    final String AREA = "1202";
-    final String SPECIALIZATION = "1";
-    final String PAGE = "0";
+public final class HeadHunterApi {
+    private final String BASE_URL = "https://api.hh.ru/";
+    private final String USER_AGENT = "HHTest/0.1";
+    private final String AREA = "1202";
+    private final String SPECIALIZATION = "1";
+    private final String PAGE = "0";
     
-    JSONParser parser;
+    private JSONParser parser;
     
-    public HeadHunterApi(JSONParser parser) {
+    private String errorMsg = "";
+    
+    private static HeadHunterApi instance = null;
+    
+    private HeadHunterApi(JSONParser parser) {
         this.parser = parser;
+    }
+    
+    public static HeadHunterApi getInstance(JSONParser parser) {
+        if (instance == null) {
+            instance = new HeadHunterApi(parser);
+        }
+        
+        return instance;
     }
     
     public List<Vacancy> getVacancies(int page, int perPage) throws IOException, SystemException {
@@ -40,6 +52,12 @@ public class HeadHunterApi {
         URL url = new URL(requestUrl.toString());
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.addRequestProperty("User-Agent", USER_AGENT);
+        
+        int responseCode = conn.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            errorMsg = conn.getResponseMessage();
+            return null;
+        }
         
         InputStream in = conn.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -61,6 +79,12 @@ public class HeadHunterApi {
         URL url = new URL(requestUrl.toString());
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.addRequestProperty("User-Agent", USER_AGENT);
+        
+        int responseCode = conn.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            errorMsg = conn.getResponseMessage();
+            return -1;
+        }
         
         InputStream in = conn.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -85,5 +109,9 @@ public class HeadHunterApi {
         }
         
         return requestUrl.toString();
+    }
+    
+    public String getErrorMsg() {
+        return errorMsg;
     }
 }
