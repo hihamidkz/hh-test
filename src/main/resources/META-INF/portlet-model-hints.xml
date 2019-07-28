@@ -2,6 +2,9 @@
 
 <model-hints>
 	<model name="com.example.myservice.model.Vacancy">
+		<default-hints>
+			<hint name="max-length">300</hint>
+		</default-hints>
 		<field name="id" type="long" />
 		<field name="name" type="String" />
 		<field name="publishedAt" type="String" />
