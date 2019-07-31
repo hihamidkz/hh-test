@@ -72,15 +72,11 @@ public class JSONParserImpl implements JSONParser {
         StringBuilder salary = new StringBuilder();
         
         if (!object.get("from").isJsonNull()) {
-            salary.append("от " + object.get("from").getAsString());
+            salary.append("от " + object.get("from").getAsString() + " ");
         }
         
         if (!object.get("to").isJsonNull()) {
             salary.append("до " + object.get("to").getAsString());
-        }
-        
-        if (salary.length() == 0) {
-            salary.append("з/п не указана");
         }
 
         return salary.toString();
@@ -95,15 +91,15 @@ public class JSONParserImpl implements JSONParser {
         StringBuilder address = new StringBuilder();
         
         if (!object.get("city").isJsonNull()) {
-            address.append(object.get("city").getAsString());
+            address.append(object.get("city").getAsString() + " ");
         }
         
         if (!object.get("street").isJsonNull()) {
-            address.append(object.get("street").getAsString());
+            address.append(object.get("street").getAsString() + ", ");
         }
         
         if (!object.get("building").isJsonNull()) {
-            address.append(object.get("city").getAsString());
+            address.append(object.get("building").getAsString());
         }
         
         return address.toString();

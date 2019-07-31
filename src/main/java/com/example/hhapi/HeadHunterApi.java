@@ -1,7 +1,6 @@
 package com.example.hhapi;
 
 import com.example.myservice.model.Vacancy;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
 import java.io.BufferedReader;

@@ -32,10 +32,10 @@ public class VacancyLocalServiceImpl extends VacancyLocalServiceBaseImpl {
      */
     
     public void addOrUpdate(Vacancy vacancy) throws SystemException {
-        try {
-            Vacancy v = VacancyUtil.findByPrimaryKey(vacancy.getId());
+        Vacancy v = VacancyUtil.fetchByPrimaryKey(vacancy.getId());
+        if (v != null) {
             VacancyLocalServiceUtil.updateVacancy(v);
-        } catch (NoSuchVacancyException e) {
+        } else {
             VacancyLocalServiceUtil.addVacancy(vacancy);
         }
     }

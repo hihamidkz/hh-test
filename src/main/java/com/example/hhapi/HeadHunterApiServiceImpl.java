@@ -11,7 +11,7 @@ public class HeadHunterApiServiceImpl implements HeadHunterApiService {
     @Override
     public List<Vacancy> getVacancies(int page, int perPage) throws IOException, SystemException {
         final JSONParser parser = new JSONParserImpl();
-        final HeadHunterApi api = new HeadHunterApi(parser);
+        final HeadHunterApi api = HeadHunterApi.getInstance(parser);
         
         return api.getVacancies(page, perPage);
     }
@@ -25,8 +25,16 @@ public class HeadHunterApiServiceImpl implements HeadHunterApiService {
     @Override
     public int getPagesCount(int perPage) throws IOException {
         final JSONParser parser = new JSONParserImpl();
-        final HeadHunterApi api = new HeadHunterApi(parser);
+        final HeadHunterApi api = HeadHunterApi.getInstance(parser);
         
         return api.getPagesCount(perPage);
+    }
+    
+    @Override
+    public String getErrorMsg() {
+        final JSONParser parser = new JSONParserImpl();
+        final HeadHunterApi api = HeadHunterApi.getInstance(parser);
+        
+        return api.getErrorMsg();
     }
 }

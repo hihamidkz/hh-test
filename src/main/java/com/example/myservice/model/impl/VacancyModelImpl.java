@@ -51,7 +51,7 @@ public class VacancyModelImpl extends BaseModelImpl<Vacancy>
             { "salary", Types.VARCHAR },
             { "address", Types.VARCHAR }
         };
-    public static final String TABLE_SQL_CREATE = "create table hh_api_Vacancy (id_ LONG not null primary key,name VARCHAR(75) null,publishedAt VARCHAR(75) null,employer VARCHAR(75) null,salary VARCHAR(75) null,address VARCHAR(75) null)";
+    public static final String TABLE_SQL_CREATE = "create table hh_api_Vacancy (id_ LONG not null primary key,name VARCHAR(300) null,publishedAt VARCHAR(300) null,employer VARCHAR(300) null,salary VARCHAR(300) null,address VARCHAR(300) null)";
     public static final String TABLE_SQL_DROP = "drop table hh_api_Vacancy";
     public static final String ORDER_BY_JPQL = " ORDER BY vacancy.id ASC";
     public static final String ORDER_BY_SQL = " ORDER BY hh_api_Vacancy.id_ ASC";
