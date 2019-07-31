@@ -4,6 +4,7 @@ import com.example.hhapi.HeadHunterApiService;
 import com.example.hhapi.HeadHunterApiServiceImpl;
 
 import com.example.myservice.model.Vacancy;
+import com.example.myservice.service.VacancyLocalServiceUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -13,6 +14,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -32,28 +34,33 @@ import de.steinwedel.messagebox.MessageBox;
 public class MyPortletUI extends UI {
 
     private static Log log = LogFactoryUtil.getLog(MyPortletUI.class);
-    private static HeadHunterApiService service;
-    private static String searchText = "";
-    private static String errorMsg = "";
-
+    private HeadHunterApiService service;
+    private String searchText = "";
+    private String errorMsg = "";
+    
+    private int page = 1;
+    private int limit = 20;
+    private int pagesCount = 0;
+    
+    private Table table;
+    private Pagination pagination;
+    
     @Override
     protected void init(VaadinRequest request) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         setContent(layout);
-
-        int pagesCount = 0;
-        
-        final int page = 1;
-        final int limit = 20;
         
         service = new HeadHunterApiServiceImpl();
-        List<Vacancy> vacancies = getVacancies(page, limit);
+        
+        List<Vacancy> vacancies = null;
         try {
-             pagesCount = service.getPagesCount(limit);
-        } catch (IOException e) {
-            log.error(e.getMessage());
+            vacancies = service.getVacancies(page, limit);
+        } catch (SystemException | IOException e) {
+            e.printStackTrace();
         }
+        
+        pagesCount = service.getPagesCount(limit);
         
         if (pagesCount == -1) {
             showErrorMsg("Ошибка сети", errorMsg);
@@ -62,49 +69,84 @@ public class MyPortletUI extends UI {
         
         final long total = limit * pagesCount;
         
-        final Table table = createTable(vacancies);
-        final Pagination pagination = createPagination(total, page, limit);
+        table = createTable(vacancies);
+        pagination = createPagination(total, page, limit);
         pagination.addPageChangeListener((PaginationResource event)-> {
-            table.removeAllItems();
-            final List<Vacancy> vacancyList = getVacancies(event.page(), event.limit());
-            if (vacancyList == null) {
-                return;
-            }
-            for (Vacancy v : vacancyList) {
-                table.addItem(v);
-            }
+            limit = event.limit();
+            page = event.page();
+            fillTable();
         });
         
         final TextField textField = new TextField();
         textField.setWidth(30, Unit.REM);
         final Button button = new Button("Найти");
+        final Button reset = new Button("Сброс");
         final HorizontalLayout searchLayout = new HorizontalLayout();
+        searchLayout.setSpacing(true);
         searchLayout.addComponent(textField);
         searchLayout.addComponent(button);
+        searchLayout.addComponent(reset);
 
         button.addClickListener((ClickEvent event)-> {
-            System.out.println("clicked");
-            try {
-                service.searchVacancies(textField.getData().toString());
-                log.debug(textField.getData().toString());
-            } catch (SystemException | IOException e) {
-                e.printStackTrace();
+            searchText = textField.getValue();
+            if (page == 1) {
+                fillTable();
+            } else {
+                pagination.setCurrentPage(1);
+            }
+        });
+        
+        reset.addClickListener((ClickEvent event)-> {
+            textField.setValue("");
+            searchText = "";
+            if (page == 1) {
+                fillTable();
+            } else {
+                pagination.setCurrentPage(1);
             }
         });
         
         layout.addComponent(searchLayout);
         layout.addComponent(table);
         layout.addComponent(pagination);
+        layout.setSpacing(true);
+    }
+    
+    private void fillTable() {
+        table.removeAllItems();
+        List<Vacancy> vacancyList = null;
+        if (searchText.equals("")) {
+            vacancyList  = getVacancies(page, limit);
+        } else {
+            vacancyList = searchVacancies(page, limit);
+        }
+        if (vacancyList == null) {
+            return;
+        }
+        for (Vacancy v : vacancyList) {
+            table.addItem(v);
+        }
     }
     
     private List<Vacancy> getVacancies(int page, int perPage) {
         List<Vacancy> vacancies = null;
         
         try {
-            vacancies = service.getVacancies(page, perPage);
-        } catch (IOException | SystemException e) {
-            showErrorMsg("Ошибка", e.getMessage());
-            e.printStackTrace();
+            int start = page * perPage;
+            int end = start + perPage;
+            vacancies = VacancyLocalServiceUtil.getVacancies(start, end);
+        } catch (SystemException e1) {
+            showErrorMsg("Ошибка", e1.getMessage());
+            e1.printStackTrace();
+        }
+        
+        if (vacancies.isEmpty()) {
+            try {
+                vacancies = service.getVacancies(page - 1, perPage);
+            } catch (IOException | SystemException e2) {
+                showErrorMsg("Ошибка", e2.getMessage());
+                e2.printStackTrace();
+            }
         }
         
         if (vacancies == null) {
@@ -112,7 +154,25 @@ public class MyPortletUI extends UI {
             showErrorMsg("Ошибка сети", errorMsg);
         }
         
-        return vacancies;        
+        return vacancies;
+    }
+    
+    private List<Vacancy> searchVacancies(int page, int perPage) {
+        List<Vacancy> vacancies = null;
+        
+        try {
+            vacancies = service.searchVacancies(page - 1, perPage, searchText);
+        } catch (IOException | SystemException e2) {
+            showErrorMsg("Ошибка", e2.getMessage());
+            e2.printStackTrace();
+        }
+        
+        if (vacancies == null) {
+            errorMsg = service.getErrorMsg();
+            showErrorMsg("Ошибка сети", errorMsg);
+        }
+        
+        return vacancies;
     }
     
     private Table createTable(List<Vacancy> vacancies) {

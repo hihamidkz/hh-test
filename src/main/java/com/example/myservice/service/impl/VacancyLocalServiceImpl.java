@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * The implementation of the vacancy local service.
@@ -38,6 +39,10 @@ public class VacancyLocalServiceImpl extends VacancyLocalServiceBaseImpl {
         } else {
             VacancyLocalServiceUtil.addVacancy(vacancy);
         }
+    }
+    
+    public List<Vacancy> getVacancies(int start, int end) throws SystemException {
+        return VacancyUtil.findAll(start, end);
     }
     
 }

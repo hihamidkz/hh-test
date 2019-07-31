@@ -131,12 +131,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.vaadin.addon</groupId>
-			<artifactId>pagination</artifactId>
-			<version>0.0.4</version>
-		</dependency>
-		
-		<dependency>
 		    <groupId>de.steinwedel.vaadin.addon</groupId>
 		    <artifactId>messagebox</artifactId>
 		    <version>3.0.18</version>
