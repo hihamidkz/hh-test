@@ -1,32 +1,41 @@
 package com.example;
 
-import com.example.hhapi.HeadHunterApiService;
-import com.example.hhapi.HeadHunterApiServiceImpl;
-
+import com.example.hhapi.service.HeadHunterApiService;
+import com.example.hhapi.service.HeadHunterApiServiceImpl;
+import com.example.myservice.model.Locality;
+import com.example.myservice.model.Region;
 import com.example.myservice.model.Vacancy;
-import com.example.myservice.service.VacancyLocalServiceUtil;
+
+import com.example.myservice.service.RegionLocalServiceUtil;
+
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+
 import com.vaadin.addon.pagination.Pagination;
 import com.vaadin.addon.pagination.PaginationResource;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
+
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
-import java.io.IOException;
-import java.util.List;
-
 import de.steinwedel.messagebox.MessageBox;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
@@ -37,6 +46,7 @@ public class MyPortletUI extends UI {
     private HeadHunterApiService service;
     private String searchText = "";
     private String errorMsg = "";
+    private String area = "";
     
     private int page = 1;
     private int limit = 20;
@@ -47,9 +57,9 @@ public class MyPortletUI extends UI {
     
     @Override
     protected void init(VaadinRequest request) {
-        final VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        setContent(layout);
+        final VerticalLayout mainLayout = new VerticalLayout();
+        mainLayout.setMargin(true);
+        setContent(mainLayout);
         
         service = new HeadHunterApiServiceImpl();
         
@@ -80,7 +90,7 @@ public class MyPortletUI extends UI {
         final TextField textField = new TextField();
         textField.setWidth(30, Unit.REM);
         final Button button = new Button("Найти");
-        final Button reset = new Button("Сброс");
+        final Button reset = new Button("Сбросить параметры поиска");
         final HorizontalLayout searchLayout = new HorizontalLayout();
         searchLayout.setSpacing(true);
         searchLayout.addComponent(textField);
@@ -106,19 +116,117 @@ public class MyPortletUI extends UI {
             }
         });
         
-        layout.addComponent(searchLayout);
-        layout.addComponent(table);
-        layout.addComponent(pagination);
-        layout.setSpacing(true);
+        final ComboBox localities = new ComboBox("Населенные пункты");
+        final ComboBox regions = getRegionsComboBox(localities);
+        final Button resetFilters = new Button("Сбросить фильтр");
+        final HorizontalLayout areaLayout = new HorizontalLayout();
+        areaLayout.addComponent(regions);
+        areaLayout.addComponent(localities);
+        areaLayout.addComponent(resetFilters);
+        areaLayout.setSpacing(true);
+        areaLayout.setComponentAlignment(resetFilters, Alignment.BOTTOM_RIGHT);
+        
+        localities.setNullSelectionAllowed(false);
+        localities.addValueChangeListener(event-> {
+            if (localities.getValue() == null) {
+                area = regions.getValue().toString();
+            } else {
+                area = localities.getValue().toString();;
+            }
+            if (page == 1) {
+                fillTable();
+            } else {
+                pagination.setCurrentPage(1);
+            }
+        });
+        
+        resetFilters.addClickListener(event-> {
+            localities.setValue("");
+            regions.setValue("");
+            area = "";
+            if (page == 1) {
+                fillTable();
+            } else {
+                pagination.setCurrentPage(1);
+            }
+        });
+        
+        mainLayout.addComponent(searchLayout);
+        mainLayout.addComponent(areaLayout);
+        mainLayout.addComponent(table);
+        mainLayout.addComponent(pagination);
+        mainLayout.setSpacing(true);
+    }
+    
+    private ComboBox getRegionsComboBox(ComboBox localitiesComboBox) {
+        List<Region> areas = getRegions();
+        
+        ComboBox select = new ComboBox("Регионы");
+        select.setNullSelectionAllowed(false);
+        if (areas != null) {
+            for (Region r : areas) {
+                select.addItem(r.getName());
+            }
+        }
+        
+        select.addValueChangeListener(event-> {
+            area = select.getValue().toString();
+            if (page == 1) {
+                fillTable();
+            } else {
+                pagination.setCurrentPage(1);
+            }
+            try {
+                List<Region> regions = RegionLocalServiceUtil.getRegionForName(
+                        select.getValue().toString());
+                Region region = regions.get(0);
+                localitiesComboBox.removeAllItems();
+                List<Locality> localities = region.getLocalities();
+                for (Locality l : localities) {
+                    localitiesComboBox.addItem(l.getName());
+                }
+            } catch (SystemException e) {
+                showErrorMsg("Ошибка", e.getMessage());
+                e.printStackTrace();
+            }
+        });
+        return select;
+    }
+    
+    private List<Region> getRegions() {
+        List<Region> areas = null;
+        
+        try {
+            int count = RegionLocalServiceUtil.getRegionsCount();
+            if (count != 0) {
+                areas = RegionLocalServiceUtil.getRegions(0, count);
+            }
+        } catch (SystemException e) {
+            showErrorMsg("Ошибка", e.getMessage());
+            e.printStackTrace();
+        }
+        
+        if (areas == null) {
+            try {
+                areas = service.getAreas();
+            } catch(IOException | SystemException e) {
+                showErrorMsg("Ошибка", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
+        return areas;
     }
     
     private void fillTable() {
         table.removeAllItems();
         List<Vacancy> vacancyList = null;
-        if (searchText.equals("")) {
+        if (searchText.equals("") && area.equals("")) {
             vacancyList  = getVacancies(page, limit);
-        } else {
+        } else if (area.equals("")) {
             vacancyList = searchVacancies(page, limit);
+        } else {
+            vacancyList = searchVacanciesForArea(page, limit);
         }
         if (vacancyList == null) {
             return;
@@ -132,21 +240,10 @@ public class MyPortletUI extends UI {
         List<Vacancy> vacancies = null;
         
         try {
-            int start = page * perPage;
-            int end = start + perPage;
-            vacancies = VacancyLocalServiceUtil.getVacancies(start, end);
-        } catch (SystemException e1) {
-            showErrorMsg("Ошибка", e1.getMessage());
-            e1.printStackTrace();
-        }
-        
-        if (vacancies.isEmpty()) {
-            try {
-                vacancies = service.getVacancies(page - 1, perPage);
-            } catch (IOException | SystemException e2) {
-                showErrorMsg("Ошибка", e2.getMessage());
-                e2.printStackTrace();
-            }
+            vacancies = service.getVacancies(page - 1, perPage);
+        } catch (IOException | SystemException e2) {
+            showErrorMsg("Ошибка", e2.getMessage());
+            e2.printStackTrace();
         }
         
         if (vacancies == null) {
@@ -162,6 +259,25 @@ public class MyPortletUI extends UI {
         
         try {
             vacancies = service.searchVacancies(page - 1, perPage, searchText);
+        } catch (IOException | SystemException e2) {
+            showErrorMsg("Ошибка", e2.getMessage());
+            e2.printStackTrace();
+        }
+        
+        if (vacancies == null) {
+            errorMsg = service.getErrorMsg();
+            showErrorMsg("Ошибка сети", errorMsg);
+        }
+        
+        return vacancies;
+    }
+    
+    private List<Vacancy> searchVacanciesForArea(int page, int perPage) {
+        List<Vacancy> vacancies = null;
+        
+        try {
+            vacancies = service.searchVacanciesForArea(page - 1, perPage,
+                                                       area, searchText);
         } catch (IOException | SystemException e2) {
             showErrorMsg("Ошибка", e2.getMessage());
             e2.printStackTrace();

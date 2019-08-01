@@ -2,7 +2,25 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping default-lazy="false" auto-import="false">
+	<import class="com.example.myservice.model.Locality" />
+	<import class="com.example.myservice.model.Region" />
 	<import class="com.example.myservice.model.Vacancy" />
+	<class name="com.example.myservice.model.impl.LocalityImpl" table="hh_api_Locality">
+		<cache usage="read-write" />
+		<id name="id" column="id_" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="parentId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
+	<class name="com.example.myservice.model.impl.RegionImpl" table="hh_api_Region">
+		<cache usage="read-write" />
+		<id name="id" column="id_" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="parentId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
 	<class name="com.example.myservice.model.impl.VacancyImpl" table="hh_api_Vacancy">
 		<cache usage="read-write" />
 		<id name="id" column="id_" type="long">

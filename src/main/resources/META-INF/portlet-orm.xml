@@ -7,6 +7,30 @@
 			<access>PROPERTY</access>
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
+	<mapped-superclass class="com.example.myservice.model.impl.LocalityModelImpl">
+		<attributes>
+			<id name="id">
+				<column name="ID_" />
+			</id>
+			<basic name="name" />
+			<basic name="parentId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
+	<mapped-superclass class="com.example.myservice.model.impl.RegionModelImpl">
+		<attributes>
+			<id name="id">
+				<column name="ID_" />
+			</id>
+			<basic name="name" />
+			<basic name="parentId" />
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+		</attributes>
+	</mapped-superclass>
 	<mapped-superclass class="com.example.myservice.model.impl.VacancyModelImpl">
 		<attributes>
 			<id name="id">
@@ -22,6 +46,14 @@
 			<transient name="primaryKeyObj" />
 		</attributes>
 	</mapped-superclass>
+	<entity class="com.example.myservice.model.impl.LocalityImpl" name="Locality">
+		<table name="hh_api_Locality" />
+		<attributes />
+	</entity>
+	<entity class="com.example.myservice.model.impl.RegionImpl" name="Region">
+		<table name="hh_api_Region" />
+		<attributes />
+	</entity>
 	<entity class="com.example.myservice.model.impl.VacancyImpl" name="Vacancy">
 		<table name="hh_api_Vacancy" />
 		<attributes />

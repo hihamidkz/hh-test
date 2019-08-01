@@ -1,6 +1,16 @@
 <?xml version="1.0"?>
 
 <model-hints>
+	<model name="com.example.myservice.model.Locality">
+		<field name="id" type="long" />
+		<field name="name" type="String" />
+		<field name="parentId" type="long" />
+	</model>
+	<model name="com.example.myservice.model.Region">
+		<field name="id" type="long" />
+		<field name="name" type="String" />
+		<field name="parentId" type="long" />
+	</model>
 	<model name="com.example.myservice.model.Vacancy">
 		<default-hints>
 			<hint name="max-length">300</hint>

@@ -13,4 +13,35 @@
   <column name="address" type="String"/>
  </entity>
  
+ <entity name="Region" local-service="true" remote-service="false">
+	<column name="id" type="long" primary="true" />
+	<column name="name" type="String" />
+	<column name="parentId" type="long" />
+	<column name="localities" type="Collection" entity="Locality" />
+	<order by="asc">	
+		<order-column name="name"></order-column>
+	</order>
+	<finder return-type="Collection" name="Name">
+     <finder-column name="name"/>
+   	</finder>
+   	<finder return-type="Collection" name="ParentId">
+     <finder-column name="parentId"/>
+   	</finder>
+ </entity>
+ 
+ <entity name="Locality" local-service="true" remote-service="false">
+	<column name="id" type="long" primary="true" />
+	<column name="name" type="String" />
+	<column name="parentId" type="long" />
+	<order by="asc">	
+		<order-column name="name"></order-column>
+	</order>
+	<finder return-type="Collection" name="Name">
+     <finder-column name="name"/>
+   </finder>
+   <finder return-type="Collection" name="ParentId">
+     <finder-column name="parentId"/>
+   	</finder>
+ </entity>
+ 
 </service-builder>

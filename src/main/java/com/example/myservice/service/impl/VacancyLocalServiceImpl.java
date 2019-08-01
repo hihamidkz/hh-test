@@ -1,14 +1,11 @@
 package com.example.myservice.service.impl;
 
-import com.example.myservice.NoSuchVacancyException;
 import com.example.myservice.model.Vacancy;
 import com.example.myservice.service.VacancyLocalServiceUtil;
 import com.example.myservice.service.base.VacancyLocalServiceBaseImpl;
 import com.example.myservice.service.persistence.VacancyUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 
-import java.util.Date;
 import java.util.List;
 
 /**

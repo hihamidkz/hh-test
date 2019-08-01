@@ -1,7 +1,10 @@
-package com.example.hhapi;
+package com.example.hhapi.util;
 
+import com.example.myservice.model.Locality;
+import com.example.myservice.model.Region;
 import com.example.myservice.model.Vacancy;
-
+import com.example.myservice.service.LocalityLocalServiceUtil;
+import com.example.myservice.service.RegionLocalServiceUtil;
 import com.example.myservice.service.VacancyLocalServiceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -10,7 +13,7 @@ import com.google.gson.JsonParser;
 import com.liferay.portal.kernel.exception.SystemException;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 
 public class JSONParserImpl implements JSONParser {
@@ -50,6 +53,35 @@ public class JSONParserImpl implements JSONParser {
         JsonElement pagesCount = object.get("pages");
         
         return pagesCount.getAsInt();
+    }
+    
+    @Override
+    public List<Region> parseRegions(String json) throws SystemException {
+        JsonParser parser = new JsonParser();
+        JsonArray ar = parser.parse(json).getAsJsonArray();
+        JsonObject object = ar.get(0).getAsJsonObject();
+        JsonArray array = object.get("areas").getAsJsonArray();
+        
+        List<Region> regions = new ArrayList<>();
+        for (JsonElement e : array) {
+            JsonObject obj = e.getAsJsonObject();
+            Region r = parseRegion(obj);
+            JsonArray arr = obj.get("areas").getAsJsonArray();
+            for (JsonElement el : arr) {
+                JsonObject o = el.getAsJsonObject();
+                Locality l = parseLocality(o);
+                LocalityLocalServiceUtil.addOrUpdate(l);
+            }
+            regions.add(r);
+            RegionLocalServiceUtil.addOrUpdate(r);
+        }
+        regions.sort(new Comparator<Region>() {
+            public int compare(Region r1, Region r2) {
+                return r1.getName().compareTo(r2.getName());
+            }
+        });
+        
+        return regions;
     }
 
     private String parseEmployeer(JsonElement element) {
@@ -103,5 +135,27 @@ public class JSONParserImpl implements JSONParser {
         }
         
         return address.toString();
+    }
+    
+    private Region parseRegion(JsonObject obj) {
+        int id = obj.get("id").getAsInt();
+        int parentId = obj.get("parent_id").getAsInt();
+        String name = obj.get("name").getAsString();
+        Region r = RegionLocalServiceUtil.createRegion(id);
+        r.setName(name);
+        r.setParentId(parentId);
+        
+        return r;
+    }
+    
+    private Locality parseLocality(JsonObject obj) {
+        int localityId = obj.get("id").getAsInt();
+        int localityParentId = obj.get("parent_id").getAsInt();
+        String localityName = obj.get("name").getAsString();
+        Locality l = LocalityLocalServiceUtil.createLocality(localityId);
+        l.setName(localityName);
+        l.setParentId(localityParentId);
+        
+        return l;
     }
 }

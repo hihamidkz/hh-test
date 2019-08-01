@@ -1,6 +1,8 @@
 package com.example.myservice.service.messaging;
 
 import com.example.myservice.service.ClpSerializer;
+import com.example.myservice.service.LocalityLocalServiceUtil;
+import com.example.myservice.service.RegionLocalServiceUtil;
 import com.example.myservice.service.VacancyLocalServiceUtil;
 
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
@@ -19,6 +21,10 @@ public class ClpMessageListener extends BaseMessageListener {
 
         if (command.equals("undeploy") &&
                 servletContextName.equals(getServletContextName())) {
+            LocalityLocalServiceUtil.clearService();
+
+            RegionLocalServiceUtil.clearService();
+
             VacancyLocalServiceUtil.clearService();
         }
     }

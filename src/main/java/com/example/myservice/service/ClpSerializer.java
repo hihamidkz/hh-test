@@ -1,5 +1,7 @@
 package com.example.myservice.service;
 
+import com.example.myservice.model.LocalityClp;
+import com.example.myservice.model.RegionClp;
 import com.example.myservice.model.VacancyClp;
 
 import com.liferay.portal.kernel.exception.PortalException;
@@ -88,6 +90,14 @@ public class ClpSerializer {
 
         String oldModelClassName = oldModelClass.getName();
 
+        if (oldModelClassName.equals(LocalityClp.class.getName())) {
+            return translateInputLocality(oldModel);
+        }
+
+        if (oldModelClassName.equals(RegionClp.class.getName())) {
+            return translateInputRegion(oldModel);
+        }
+
         if (oldModelClassName.equals(VacancyClp.class.getName())) {
             return translateInputVacancy(oldModel);
         }
@@ -105,6 +115,26 @@ public class ClpSerializer {
         }
 
         return newList;
+    }
+
+    public static Object translateInputLocality(BaseModel<?> oldModel) {
+        LocalityClp oldClpModel = (LocalityClp) oldModel;
+
+        BaseModel<?> newModel = oldClpModel.getLocalityRemoteModel();
+
+        newModel.setModelAttributes(oldClpModel.getModelAttributes());
+
+        return newModel;
+    }
+
+    public static Object translateInputRegion(BaseModel<?> oldModel) {
+        RegionClp oldClpModel = (RegionClp) oldModel;
+
+        BaseModel<?> newModel = oldClpModel.getRegionRemoteModel();
+
+        newModel.setModelAttributes(oldClpModel.getModelAttributes());
+
+        return newModel;
     }
 
     public static Object translateInputVacancy(BaseModel<?> oldModel) {
@@ -131,6 +161,16 @@ public class ClpSerializer {
         Class<?> oldModelClass = oldModel.getClass();
 
         String oldModelClassName = oldModelClass.getName();
+
+        if (oldModelClassName.equals(
+                    "com.example.myservice.model.impl.LocalityImpl")) {
+            return translateOutputLocality(oldModel);
+        }
+
+        if (oldModelClassName.equals(
+                    "com.example.myservice.model.impl.RegionImpl")) {
+            return translateOutputRegion(oldModel);
+        }
 
         if (oldModelClassName.equals(
                     "com.example.myservice.model.impl.VacancyImpl")) {
@@ -213,11 +253,39 @@ public class ClpSerializer {
             return new SystemException();
         }
 
+        if (className.equals("com.example.myservice.NoSuchLocalityException")) {
+            return new com.example.myservice.NoSuchLocalityException();
+        }
+
+        if (className.equals("com.example.myservice.NoSuchRegionException")) {
+            return new com.example.myservice.NoSuchRegionException();
+        }
+
         if (className.equals("com.example.myservice.NoSuchVacancyException")) {
             return new com.example.myservice.NoSuchVacancyException();
         }
 
         return throwable;
+    }
+
+    public static Object translateOutputLocality(BaseModel<?> oldModel) {
+        LocalityClp newModel = new LocalityClp();
+
+        newModel.setModelAttributes(oldModel.getModelAttributes());
+
+        newModel.setLocalityRemoteModel(oldModel);
+
+        return newModel;
+    }
+
+    public static Object translateOutputRegion(BaseModel<?> oldModel) {
+        RegionClp newModel = new RegionClp();
+
+        newModel.setModelAttributes(oldModel.getModelAttributes());
+
+        newModel.setRegionRemoteModel(oldModel);
+
+        return newModel;
     }
 
     public static Object translateOutputVacancy(BaseModel<?> oldModel) {

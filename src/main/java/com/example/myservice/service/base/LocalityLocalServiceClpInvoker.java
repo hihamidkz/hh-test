@@ -1,6 +1,6 @@
 package com.example.myservice.service.base;
 
-import com.example.myservice.service.VacancyLocalServiceUtil;
+import com.example.myservice.service.LocalityLocalServiceUtil;
 
 import java.util.Arrays;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @author hamid
  * @generated
  */
-public class VacancyLocalServiceClpInvoker {
+public class LocalityLocalServiceClpInvoker {
     private String _methodName0;
     private String[] _methodParameterTypes0;
     private String _methodName1;
@@ -49,26 +49,28 @@ public class VacancyLocalServiceClpInvoker {
     private String[] _methodParameterTypes46;
     private String _methodName47;
     private String[] _methodParameterTypes47;
+    private String _methodName48;
+    private String[] _methodParameterTypes48;
 
-    public VacancyLocalServiceClpInvoker() {
-        _methodName0 = "addVacancy";
+    public LocalityLocalServiceClpInvoker() {
+        _methodName0 = "addLocality";
 
         _methodParameterTypes0 = new String[] {
-                "com.example.myservice.model.Vacancy"
+                "com.example.myservice.model.Locality"
             };
 
-        _methodName1 = "createVacancy";
+        _methodName1 = "createLocality";
 
         _methodParameterTypes1 = new String[] { "long" };
 
-        _methodName2 = "deleteVacancy";
+        _methodName2 = "deleteLocality";
 
         _methodParameterTypes2 = new String[] { "long" };
 
-        _methodName3 = "deleteVacancy";
+        _methodName3 = "deleteLocality";
 
         _methodParameterTypes3 = new String[] {
-                "com.example.myservice.model.Vacancy"
+                "com.example.myservice.model.Locality"
             };
 
         _methodName4 = "dynamicQuery";
@@ -107,11 +109,11 @@ public class VacancyLocalServiceClpInvoker {
                 "com.liferay.portal.kernel.dao.orm.Projection"
             };
 
-        _methodName10 = "fetchVacancy";
+        _methodName10 = "fetchLocality";
 
         _methodParameterTypes10 = new String[] { "long" };
 
-        _methodName11 = "getVacancy";
+        _methodName11 = "getLocality";
 
         _methodParameterTypes11 = new String[] { "long" };
 
@@ -119,18 +121,18 @@ public class VacancyLocalServiceClpInvoker {
 
         _methodParameterTypes12 = new String[] { "java.io.Serializable" };
 
-        _methodName13 = "getVacancies";
+        _methodName13 = "getLocalities";
 
         _methodParameterTypes13 = new String[] { "int", "int" };
 
-        _methodName14 = "getVacanciesCount";
+        _methodName14 = "getLocalitiesCount";
 
         _methodParameterTypes14 = new String[] {  };
 
-        _methodName15 = "updateVacancy";
+        _methodName15 = "updateLocality";
 
         _methodParameterTypes15 = new String[] {
-                "com.example.myservice.model.Vacancy"
+                "com.example.myservice.model.Locality"
             };
 
         _methodName40 = "getBeanIdentifier";
@@ -144,56 +146,60 @@ public class VacancyLocalServiceClpInvoker {
         _methodName46 = "addOrUpdate";
 
         _methodParameterTypes46 = new String[] {
-                "com.example.myservice.model.Vacancy"
+                "com.example.myservice.model.Locality"
             };
 
-        _methodName47 = "getVacancies";
+        _methodName47 = "getLocalitiesForParentId";
 
-        _methodParameterTypes47 = new String[] { "int", "int" };
+        _methodParameterTypes47 = new String[] { "long" };
+
+        _methodName48 = "getLocalityForName";
+
+        _methodParameterTypes48 = new String[] { "java.lang.String" };
     }
 
     public Object invokeMethod(String name, String[] parameterTypes,
         Object[] arguments) throws Throwable {
         if (_methodName0.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes0, parameterTypes)) {
-            return VacancyLocalServiceUtil.addVacancy((com.example.myservice.model.Vacancy) arguments[0]);
+            return LocalityLocalServiceUtil.addLocality((com.example.myservice.model.Locality) arguments[0]);
         }
 
         if (_methodName1.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes1, parameterTypes)) {
-            return VacancyLocalServiceUtil.createVacancy(((Long) arguments[0]).longValue());
+            return LocalityLocalServiceUtil.createLocality(((Long) arguments[0]).longValue());
         }
 
         if (_methodName2.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes2, parameterTypes)) {
-            return VacancyLocalServiceUtil.deleteVacancy(((Long) arguments[0]).longValue());
+            return LocalityLocalServiceUtil.deleteLocality(((Long) arguments[0]).longValue());
         }
 
         if (_methodName3.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes3, parameterTypes)) {
-            return VacancyLocalServiceUtil.deleteVacancy((com.example.myservice.model.Vacancy) arguments[0]);
+            return LocalityLocalServiceUtil.deleteLocality((com.example.myservice.model.Locality) arguments[0]);
         }
 
         if (_methodName4.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes4, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQuery();
+            return LocalityLocalServiceUtil.dynamicQuery();
         }
 
         if (_methodName5.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes5, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0]);
+            return LocalityLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0]);
         }
 
         if (_methodName6.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes6, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
+            return LocalityLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
                 ((Integer) arguments[1]).intValue(),
                 ((Integer) arguments[2]).intValue());
         }
 
         if (_methodName7.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes7, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
+            return LocalityLocalServiceUtil.dynamicQuery((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
                 ((Integer) arguments[1]).intValue(),
                 ((Integer) arguments[2]).intValue(),
                 (com.liferay.portal.kernel.util.OrderByComparator) arguments[3]);
@@ -201,69 +207,73 @@ public class VacancyLocalServiceClpInvoker {
 
         if (_methodName8.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes8, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQueryCount((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0]);
+            return LocalityLocalServiceUtil.dynamicQueryCount((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0]);
         }
 
         if (_methodName9.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes9, parameterTypes)) {
-            return VacancyLocalServiceUtil.dynamicQueryCount((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
+            return LocalityLocalServiceUtil.dynamicQueryCount((com.liferay.portal.kernel.dao.orm.DynamicQuery) arguments[0],
                 (com.liferay.portal.kernel.dao.orm.Projection) arguments[1]);
         }
 
         if (_methodName10.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes10, parameterTypes)) {
-            return VacancyLocalServiceUtil.fetchVacancy(((Long) arguments[0]).longValue());
+            return LocalityLocalServiceUtil.fetchLocality(((Long) arguments[0]).longValue());
         }
 
         if (_methodName11.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes11, parameterTypes)) {
-            return VacancyLocalServiceUtil.getVacancy(((Long) arguments[0]).longValue());
+            return LocalityLocalServiceUtil.getLocality(((Long) arguments[0]).longValue());
         }
 
         if (_methodName12.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes12, parameterTypes)) {
-            return VacancyLocalServiceUtil.getPersistedModel((java.io.Serializable) arguments[0]);
+            return LocalityLocalServiceUtil.getPersistedModel((java.io.Serializable) arguments[0]);
         }
 
         if (_methodName13.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes13, parameterTypes)) {
-            return VacancyLocalServiceUtil.getVacancies(((Integer) arguments[0]).intValue(),
+            return LocalityLocalServiceUtil.getLocalities(((Integer) arguments[0]).intValue(),
                 ((Integer) arguments[1]).intValue());
         }
 
         if (_methodName14.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes14, parameterTypes)) {
-            return VacancyLocalServiceUtil.getVacanciesCount();
+            return LocalityLocalServiceUtil.getLocalitiesCount();
         }
 
         if (_methodName15.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes15, parameterTypes)) {
-            return VacancyLocalServiceUtil.updateVacancy((com.example.myservice.model.Vacancy) arguments[0]);
+            return LocalityLocalServiceUtil.updateLocality((com.example.myservice.model.Locality) arguments[0]);
         }
 
         if (_methodName40.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes40, parameterTypes)) {
-            return VacancyLocalServiceUtil.getBeanIdentifier();
+            return LocalityLocalServiceUtil.getBeanIdentifier();
         }
 
         if (_methodName41.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes41, parameterTypes)) {
-            VacancyLocalServiceUtil.setBeanIdentifier((java.lang.String) arguments[0]);
+            LocalityLocalServiceUtil.setBeanIdentifier((java.lang.String) arguments[0]);
 
             return null;
         }
 
         if (_methodName46.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes46, parameterTypes)) {
-            VacancyLocalServiceUtil.addOrUpdate((com.example.myservice.model.Vacancy) arguments[0]);
+            LocalityLocalServiceUtil.addOrUpdate((com.example.myservice.model.Locality) arguments[0]);
 
             return null;
         }
 
         if (_methodName47.equals(name) &&
                 Arrays.deepEquals(_methodParameterTypes47, parameterTypes)) {
-            return VacancyLocalServiceUtil.getVacancies(((Integer) arguments[0]).intValue(),
-                ((Integer) arguments[1]).intValue());
+            return LocalityLocalServiceUtil.getLocalitiesForParentId(((Long) arguments[0]).longValue());
+        }
+
+        if (_methodName48.equals(name) &&
+                Arrays.deepEquals(_methodParameterTypes48, parameterTypes)) {
+            return LocalityLocalServiceUtil.getLocalityForName((java.lang.String) arguments[0]);
         }
 
         throw new UnsupportedOperationException();

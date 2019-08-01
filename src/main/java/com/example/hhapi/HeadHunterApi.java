@@ -1,5 +1,7 @@
 package com.example.hhapi;
 
+import com.example.hhapi.util.JSONParser;
+import com.example.myservice.model.Region;
 import com.example.myservice.model.Vacancy;
 import com.liferay.portal.kernel.exception.SystemException;
 
@@ -8,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,6 @@ public final class HeadHunterApi {
     public List<Vacancy> getVacancies(int page, int perPage)
             throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
-        params.put("area", AREA);
         params.put("specialization", SPECIALIZATION);
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(perPage));
@@ -70,7 +70,7 @@ public final class HeadHunterApi {
         return parser.parseVacancies(response);
     }
     
-    public List<Vacancy> searchVacancies(int page, int perPage, String text)
+    public List<Vacancy> getVacancies(int page, int perPage, String text)
             throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
         params.put("area", AREA);
@@ -99,11 +99,61 @@ public final class HeadHunterApi {
         return parser.parseVacancies(response);
     }
     
+    public List<Vacancy> getVacancies(int page, int perPage, long area, String text)
+            throws IOException, SystemException {
+        Map<String, String> params = new HashMap<>();
+        params.put("area", String.valueOf(area));
+        params.put("specialization", SPECIALIZATION);
+        params.put("page", String.valueOf(page));
+        params.put("per_page", String.valueOf(perPage));
+        params.put("text", text);
+        
+        String requestUrl = getRequestUrl("vacancies", params);
+        
+        URL url = new URL(requestUrl.toString());
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.addRequestProperty("User-Agent", USER_AGENT);
+        
+        int responseCode = conn.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            errorMsg = conn.getResponseMessage();
+            return null;
+        }
+        
+        InputStream in = conn.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        String response = br.lines().collect(Collectors.joining());
+        
+        return parser.parseVacancies(response);
+    }
+    
+    public List<Region> getAreas() throws IOException, SystemException {
+        String requestUrl = getRequestUrl("areas", null);
+        
+        URL url = new URL(requestUrl.toString());
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.addRequestProperty("User-Agent", USER_AGENT);
+        
+        int responseCode = conn.getResponseCode();
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            errorMsg = conn.getResponseMessage();
+            return null;
+        }
+        
+        InputStream in = conn.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        String response = br.lines().collect(Collectors.joining());
+        
+        return parser.parseRegions(response);
+    }
+    
     private String getRequestUrl(String rest, Map<String, String> params) {
         StringBuilder requestUrl = new StringBuilder(BASE_URL);
         requestUrl.append(rest);
         
-        if (params.isEmpty()) {
+        if (params == null) {
             return requestUrl.toString();
         }
         

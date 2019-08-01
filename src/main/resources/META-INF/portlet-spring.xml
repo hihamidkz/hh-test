@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="com.example.myservice.service.LocalityLocalService" class="com.example.myservice.service.impl.LocalityLocalServiceImpl" />
+	<bean id="com.example.myservice.service.persistence.LocalityPersistence" class="com.example.myservice.service.persistence.LocalityPersistenceImpl" parent="basePersistence" />
+	<bean id="com.example.myservice.service.RegionLocalService" class="com.example.myservice.service.impl.RegionLocalServiceImpl" />
+	<bean id="com.example.myservice.service.persistence.RegionPersistence" class="com.example.myservice.service.persistence.RegionPersistenceImpl" parent="basePersistence" />
 	<bean id="com.example.myservice.service.VacancyLocalService" class="com.example.myservice.service.impl.VacancyLocalServiceImpl" />
 	<bean id="com.example.myservice.service.persistence.VacancyPersistence" class="com.example.myservice.service.persistence.VacancyPersistenceImpl" parent="basePersistence" />
 </beans>
