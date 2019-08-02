@@ -19,7 +19,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
 
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -34,15 +33,13 @@ import com.vaadin.ui.VerticalLayout;
 import de.steinwedel.messagebox.MessageBox;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
 @Widgetset("com.example.AppWidgetSet")
 public class MyPortletUI extends UI {
-
-    private static Log log = LogFactoryUtil.getLog(MyPortletUI.class);
+    
     private HeadHunterApiService service;
     private String searchText = "";
     private String errorMsg = "";
@@ -63,19 +60,7 @@ public class MyPortletUI extends UI {
         
         service = new HeadHunterApiServiceImpl();
         
-        List<Vacancy> vacancies = null;
-        try {
-            vacancies = service.getVacancies(page, limit);
-        } catch (SystemException | IOException e) {
-            e.printStackTrace();
-        }
-        
-        pagesCount = service.getPagesCount(limit);
-        
-        if (pagesCount == -1) {
-            showErrorMsg("Ошибка сети", errorMsg);
-            pagesCount = 1;
-        }
+        List<Vacancy> vacancies = getVacancies(page, limit);
         
         final long total = limit * pagesCount;
         
@@ -84,6 +69,7 @@ public class MyPortletUI extends UI {
         pagination.addPageChangeListener((PaginationResource event)-> {
             limit = event.limit();
             page = event.page();
+            pagination.setTotalCount(pagesCount * limit);
             fillTable();
         });
         
@@ -158,6 +144,9 @@ public class MyPortletUI extends UI {
         mainLayout.setSpacing(true);
     }
     
+    /**
+     * Creates new ComboBox for choosing areas
+     */
     private ComboBox getRegionsComboBox(ComboBox localitiesComboBox) {
         List<Region> areas = getRegions();
         
@@ -193,6 +182,10 @@ public class MyPortletUI extends UI {
         return select;
     }
     
+    /**
+     * Gets areas via hh-api or from database 
+     * @return list of areas
+     */
     private List<Region> getRegions() {
         List<Region> areas = null;
         
@@ -218,6 +211,9 @@ public class MyPortletUI extends UI {
         return areas;
     }
     
+    /**
+     * Fills table with vacancies entries
+     */
     private void fillTable() {
         table.removeAllItems();
         List<Vacancy> vacancyList = null;
@@ -231,11 +227,16 @@ public class MyPortletUI extends UI {
         if (vacancyList == null) {
             return;
         }
+        
+        pagination.setTotalCount(pagesCount * limit);
         for (Vacancy v : vacancyList) {
             table.addItem(v);
         }
     }
     
+    /**
+     * Gets all vacancies
+     */
     private List<Vacancy> getVacancies(int page, int perPage) {
         List<Vacancy> vacancies = null;
         
@@ -246,7 +247,10 @@ public class MyPortletUI extends UI {
             e2.printStackTrace();
         }
         
-        if (vacancies == null) {
+        pagesCount = service.getPagesCount(perPage);
+        
+        if (pagesCount == -1) {
+            pagesCount = 1;
             errorMsg = service.getErrorMsg();
             showErrorMsg("Ошибка сети", errorMsg);
         }
@@ -254,6 +258,9 @@ public class MyPortletUI extends UI {
         return vacancies;
     }
     
+    /**
+     * Finds and gets all vacancies with specified text
+     */
     private List<Vacancy> searchVacancies(int page, int perPage) {
         List<Vacancy> vacancies = null;
         
@@ -264,14 +271,20 @@ public class MyPortletUI extends UI {
             e2.printStackTrace();
         }
         
-        if (vacancies == null) {
+        pagesCount = service.getPagesCount(perPage);
+        
+        if (pagesCount == -1) {
             errorMsg = service.getErrorMsg();
+            pagesCount = 1;
             showErrorMsg("Ошибка сети", errorMsg);
         }
         
         return vacancies;
     }
     
+    /**
+     * Finds and gets all vacancies for specified area
+     */
     private List<Vacancy> searchVacanciesForArea(int page, int perPage) {
         List<Vacancy> vacancies = null;
         
@@ -283,8 +296,11 @@ public class MyPortletUI extends UI {
             e2.printStackTrace();
         }
         
-        if (vacancies == null) {
+        pagesCount = service.getPagesCount(perPage);
+        
+        if (pagesCount == -1) {
             errorMsg = service.getErrorMsg();
+            pagesCount = 1;
             showErrorMsg("Ошибка сети", errorMsg);
         }
         

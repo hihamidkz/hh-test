@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class for gathering data from HH.RU using REST API
+ */
 public final class HeadHunterApi {
     private final String BASE_URL = "https://api.hh.ru/";
     private final String USER_AGENT = "HHTest/0.1";
@@ -41,6 +44,9 @@ public final class HeadHunterApi {
         return instance;
     }
     
+    /**
+     * Get all vacancies
+     */
     public List<Vacancy> getVacancies(int page, int perPage)
             throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
@@ -70,6 +76,9 @@ public final class HeadHunterApi {
         return parser.parseVacancies(response);
     }
     
+    /**
+     * Search vacancies with the given text
+     */
     public List<Vacancy> getVacancies(int page, int perPage, String text)
             throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
@@ -88,6 +97,7 @@ public final class HeadHunterApi {
         int responseCode = conn.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             errorMsg = conn.getResponseMessage();
+            pagesCount = -1;
             return null;
         }
         
@@ -96,9 +106,13 @@ public final class HeadHunterApi {
         
         String response = br.lines().collect(Collectors.joining());
         
+        pagesCount = parser.parsePagesCount(response);
         return parser.parseVacancies(response);
     }
     
+    /**
+     * Search vacancies for the specified area
+     */
     public List<Vacancy> getVacancies(int page, int perPage, long area, String text)
             throws IOException, SystemException {
         Map<String, String> params = new HashMap<>();
@@ -117,6 +131,7 @@ public final class HeadHunterApi {
         int responseCode = conn.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             errorMsg = conn.getResponseMessage();
+            pagesCount = -1;
             return null;
         }
         
@@ -125,9 +140,13 @@ public final class HeadHunterApi {
         
         String response = br.lines().collect(Collectors.joining());
         
+        pagesCount = parser.parsePagesCount(response);
         return parser.parseVacancies(response);
     }
     
+    /**
+     * Get all areas
+     */
     public List<Region> getAreas() throws IOException, SystemException {
         String requestUrl = getRequestUrl("areas", null);
         
